@@ -5,4 +5,4 @@ I would like to express my sincere gratitude to Chen, a PhD student at Aizu Univ
 
 The data relates to the following publications: F. D. Ros, U. C. de Moura, and M. P. Yankov, “Machine learningbased EDFA gain model generalizable to multiple physical devices,” in accepted, European Conference on Optical Communications (ECOC), available https://arxiv.org/abs/2009.05326, (2020). 
 
-Drive：
+DaTaset Drive：
