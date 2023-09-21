@@ -10,4 +10,4 @@ The data used in this study were provided by  M. P. Yankov and F. D. Ros, “Inp
 Dataset here https://doi.org/10.11583/DTU.13135754 (2020). 
 
 # ACKNOWLEDGEMENTS
-I would like to express my sincere gratitude to Chen, a PhD student at Aizu University, my supervisor Lu for their generous help and support.
+I would like to express my sincere gratitude to Mr.Chen, a PhD student at Aizu University, my supervisor Prof.Lu for their generous help and support.
