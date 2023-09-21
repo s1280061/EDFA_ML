@@ -6,7 +6,8 @@ This thesis relates to the following publications: F. D. Ros, U. C. de Moura, an
 # DATA PREPARATION 
 Download from: https://drive.google.com/drive/folders/18pvEWppi-tGHihIMFbjSaYziRzOy6KUg?usp=sharing
 
-The data used in this study were provided by  M. P. Yankov and F. D. Ros, “Input-output power spectral densities for three C-band EDFAs and four multi-span inline EDFAd fiber optic systems of different lengths,” Tech. Univ. Denmark. Dataset https://doi.org/10.11583/DTU.13135754 (2020). 
+The data used in this study were provided by  M. P. Yankov and F. D. Ros, “Input-output power spectral densities for three C-band EDFAs and four multi-span inline EDFAd fiber optic systems of different lengths,” Tech. Univ. Denmark. 
+Dataset here https://doi.org/10.11583/DTU.13135754 (2020). 
 
 # ACKNOWLEDGEMENTS
 I would like to express my sincere gratitude to Chen, a PhD student at Aizu University, my supervisor Lu for their generous help and support.
