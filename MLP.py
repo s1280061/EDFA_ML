@@ -1,37 +1,59 @@
+
+from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from sklearn.model_selection import KFold
 import numpy as np
-from model import NN
 from torch.optim.lr_scheduler import CosineAnnealingLR
 import pandas as pd
 import csv
-#import matplotlib.pyplot as plt
+import time
+import matplotlib.pyplot as plt
+import psutil
+class NN(nn.Module):
+    def __init__(self):
+        super(NN, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Linear(85, 256),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+        )
+        self.layer2 = nn.Sequential(
+            nn.Linear(256, 128),
+            nn.BatchNorm1d(128),
+            nn.ReLU(),
+        )
+        self.decoder = nn.Linear(128, 83)
 
-# Define the dataset class
-
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.layer2(x)
+        y = self.decoder(x)
+        return y
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self, X, y):
         self.X = torch.tensor(X, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.float32)
-
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
-
     def __len__(self):
         return len(self.X)
 
-
-dataset = np.loadtxt(r"C:\Users\Administrator\Desktop\EDFA-NN\EDFA_1_18dB.csv", delimiter=",")
+start_time = time.time()
+dataset = np.loadtxt("/Users/kas/Desktop/EDFA_ML-main/EDFA_1_15dB.csv", delimiter=",")
 X = dataset[:, 1:86]
 y = dataset[:, 86:]
 
-
+def get_memory_usage():
+    # プロセスのメモリ使用量を取得
+    process = psutil.Process()
+    memory_info = process.memory_info()
+    # メモリ使用量を表示
+    print(f"Memory Usage: {memory_info.rss / (1024 * 1024):.2f} MB")
 def train(model, train_loader, optimizer):
     model.train()
-
     for data, target in train_loader:
         optimizer.zero_grad()
         output = model(data)
@@ -39,10 +61,8 @@ def train(model, train_loader, optimizer):
         loss.backward()
         optimizer.step()
         scheduler.step()
-
 def evaluate(model, val_loader):
     model.eval()
-
     val_loss = 0
     with torch.no_grad():
         for data, target in val_loader:
@@ -65,40 +85,13 @@ def evaluate_bias(model, X, y):
         mean_bias = np.mean(errors)
         return mean_bias
 
-# バイアスの評価
-bias = evaluate_bias(model, X, y)
-
-print("Mean Bias:", bias)
-
-# Calculate mean and variance of input features
-mean = np.mean(X, axis=0)
-variance = np.var(X, axis=0)
-
-print("Mean of input features:", mean)
-print("Variance of input features:", variance)
-
-
-# Define output file path
-output_file = r"C:\Users\Administrator\Desktop\EDFA-NN\statistics.csv"
-
-# Prepare data to write to CSV file
-data = [['Feature', 'Mean', 'Variance']]
-for i, (m, v) in enumerate(zip(mean, variance)):
-    data.append([f'Feature {i+1}', m, v])
-
-# Write data to CSV file
-with open(output_file, 'w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerows(data)
-
-print("CSV file saved successfully.")
-
-
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.9, 0.999), eps=1e-08)
 scheduler = CosineAnnealingLR(optimizer, 20, 1e-5)
 loss_fn = nn.MSELoss()
 kf = KFold(n_splits=5, shuffle=True, random_state=0)
 ls = []
+params = model.state_dict()
+print("Weights of layer1:", params['layer1.0.weight'])
 
 for fold, (train_index, val_index) in enumerate(kf.split(X)):
     train_dataset = MyDataset(X[train_index], y[train_index])
@@ -110,7 +103,7 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
         train(model, train_loader, optimizer)
         val_loss = evaluate(model, val_loader)
         print("Fold {}, Epoch {}, Val Loss: {:.4f}".format(fold, epoch+1, val_loss))
-
+        get_memory_usage()
         if fold == 0 and epoch == 0:
             best_loss = val_loss
         elif val_loss < best_loss:
@@ -118,7 +111,6 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
             filename = 'model_best_{}-{}.pth'.format(fold, epoch+1)
             torch.save(model.state_dict(), filename)
             print("********************************BEST {}-RMSE: {:.2e}*****************************".format(fold, best_loss))
-
         if epoch == 499:
             ls.append(best_loss)
 
@@ -126,7 +118,8 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
 p = pd.DataFrame(ls)
 filename = 'loss.csv'
 p.to_csv(filename)
+end_time = time.time()
 
-
-# Plot the loss values
-#
+elapsed_time = end_time - start_time
+print(f"処理にかかった時間: {elapsed_time}秒")
+get_memory_usage()
