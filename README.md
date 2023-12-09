@@ -1,5 +1,5 @@
 # Optical Amplifier Gain Modeling using Machine Learning 
-This is for a graduation thesis.
+graduation thesis, Pytorch, MLP_pruned, Deep Learning
 
 This thesis relates to the following publications: F. D. Ros, U. C. de Moura, and M. P. Yankov, “Machine learningbased EDFA gain model generalizable to multiple physical devices,” in accepted, European Conference on Optical Communications (ECOC), available https://arxiv.org/abs/2009.05326, (2020). 
 
